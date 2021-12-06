@@ -17,37 +17,37 @@ bool radboud::pep::ElGamal::operator!=(const ElGamal& rhs) const {
 
 // encrypt message M using public key Y
 ElGamal radboud::pep::Encrypt(const GroupElement& M, const GroupElement& Y) {
-	auto r = Scalar::Random();
+  auto r = Scalar::Random();
   EXPECT(!r.zero()); // Random() does never return a zero scalar
   ENSURE(!Y.zero()); // we should not encrypt anything with an empty public key, as this will result in plain text send over the line
-	return {r * G, M + r*Y, Y};
+  return {r * G, M + r*Y, Y};
 }
 
 // decrypt encrypted ElGamal tuple with secret key y
 GroupElement radboud::pep::Decrypt(const ElGamal& in, const Scalar& y) {
-	return in.C - y * in.B;
+  return in.C - y * in.B;
 }
 
 ElGamal RerandomizeY(const ElGamal& in, const Scalar& s) {
-	return {in.B - s*G, in.C, in.Y + s*G};
+  return {in.B - s*G, in.C, in.Y + s*G};
 }
 
 // randomize the encryption
 ElGamal radboud::pep::Rerandomize(const ElGamal& in, const Scalar& s) {
-	return {s * G + in.B, s * in.Y + in.C, in.Y};
+  return {s * G + in.B, s * in.Y + in.C, in.Y};
 }
 
 // make it decryptable with another key k*y (with y the original private key)
 ElGamal radboud::pep::Rekey(const ElGamal& in, const Scalar& k) {
-	return {in.B / k, in.C, k * in.Y};
+  return {in.B / k, in.C, k * in.Y};
 }
 
 // adjust the encrypted cypher text to be n*M (with M the original text being encrypted)
 ElGamal radboud::pep::Reshuffle(const ElGamal& in, const Scalar& n) {
-	return {n * in.B, n * in.C, in.Y};
+  return {n * in.B, n * in.C, in.Y};
 }
 
 // combination of Rekey(k) and Reshuffle(n)
 ElGamal radboud::pep::RKS(const ElGamal& in, const Scalar& k, const Scalar& n) {
-	return {(n / k) * in.B, n * in.C, k * in.Y};
+  return {(n / k) * in.B, n * in.C, k * in.Y};
 }

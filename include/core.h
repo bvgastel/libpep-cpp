@@ -8,13 +8,13 @@ namespace radboud {
 namespace pep {
 
 struct ElGamal {
-	GroupElement B;
-	GroupElement C;
-	GroupElement Y;
-	ElGamal() { }
-	ElGamal(GroupElement _B, const GroupElement& _C, const GroupElement& _Y);
-	bool operator==(const ElGamal& rhs) const;
-	bool operator!=(const ElGamal& rhs) const;
+  GroupElement B;
+  GroupElement C;
+  GroupElement Y;
+  ElGamal() { }
+  ElGamal(GroupElement _B, const GroupElement& _C, const GroupElement& _Y);
+  bool operator==(const ElGamal& rhs) const;
+  bool operator!=(const ElGamal& rhs) const;
 };
 
 // encrypt message M using public key Y

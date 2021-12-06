@@ -33,16 +33,16 @@ extern "C" {
 
 #if defined(WIN32)
 inline int strncasecmp(const char* s1, const char* s2, size_t n) {
-	return _strnicmp(s1, s2, n);
+  return _strnicmp(s1, s2, n);
 }
 
 inline int link(const char* oldPlace, const char *newPlace) {
-	if (CreateHardLinkA(newPlace, oldPlace, NULL))
-		return 0;
-	return -1;
+  if (CreateHardLinkA(newPlace, oldPlace, NULL))
+    return 0;
+  return -1;
 }
 inline void bzero(void* b, size_t len) {
-	memset(b, '\0', len);
+  memset(b, '\0', len);
 }
 #endif
 
