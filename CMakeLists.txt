@@ -91,6 +91,10 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-reorder-blocks -fno-reorder-blocks-and-partition")
 ENDIF()
 
+# need a copy to prevent warnings ending up in dependencies
+SET(BASE_C_FLAGS "${CMAKE_C_FLAGS}")
+SET(BASE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+
 SET(PACKAGE_MIRROR "http://packages.bitpowder.com/external/")
 set(EXT_PROJECTS_DIR ${PROJECT_SOURCE_DIR}/ext)
 
