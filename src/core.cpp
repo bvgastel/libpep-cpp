@@ -7,6 +7,19 @@ using namespace radboud::pep;
 radboud::pep::ElGamal::ElGamal(GroupElement _B, const GroupElement& _C, const GroupElement& _Y) : B(_B), C(_C), Y(_Y) {
 }
 
+std::string ElGamal::hex() const {
+  return B.hex() + C.hex() + Y.hex();
+}
+
+ElGamal ElGamal::FromHex(std::string_view view) {
+  if (view.size() != 192)
+    throw std::invalid_argument("ElGamal::FromHex expected different size");
+  ElGamal retval;
+  retval.B = GroupElement::FromHex(view.substr(0, 64));
+  retval.C = GroupElement::FromHex(view.substr(64, 64));
+  retval.Y = GroupElement::FromHex(view.substr(128, 64));
+  return retval;
+}
 bool radboud::pep::ElGamal::operator==(const ElGamal& rhs) const {
   return B == rhs.B && C == rhs.C && Y == rhs.Y;
 }

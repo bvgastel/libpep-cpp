@@ -15,6 +15,8 @@ struct ElGamal {
 	ElGamal(GroupElement _B, const GroupElement& _C, const GroupElement& _Y);
 	bool operator==(const ElGamal& rhs) const;
 	bool operator!=(const ElGamal& rhs) const;
+  std::string hex() const;
+  static ElGamal FromHex(std::string_view view);
 };
 
 // encrypt message M using public key Y

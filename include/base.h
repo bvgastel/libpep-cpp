@@ -46,6 +46,8 @@ struct Scalar {
 	Scalar operator-() const; // negate
 	bool zero() const;
 	bool valid() const;
+  std::string hex() const;
+  static Scalar FromHex(std::string_view view);
 	// returns a scalar != 0
 	static Scalar Random();
 	static Scalar FromHash(uint8_t (&value)[64]);
@@ -72,6 +74,8 @@ struct GroupElement {
 	}
 	bool zero() const;
 	bool valid() const;
+  std::string hex() const;
+  static GroupElement FromHex(std::string_view view);
 	static GroupElement Random();
 	static GroupElement FromHash(uint8_t (&value)[64]);
 };
@@ -151,6 +155,13 @@ using KDFContext = char[KDF_SEEDKEYBYTES];
 void KDFGenerateSeedKey(KDFSeedKey& seedKey);
 
 void KDF(unsigned char *output, size_t outputLength, uint64_t subkey_id, const KDFContext& context, const KDFSeedKey& seedKey);
+
+std::string ToHex(std::string_view in);
+void FromHex(uint8_t* out, size_t out_len, std::string_view in);
+template <size_t N>
+void FromHex(uint8_t (&out)[N], std::string_view in) {
+  FromHex(out, N, in);
+}
 
 }
 }

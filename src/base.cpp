@@ -4,6 +4,7 @@
 
 #include <type_traits>
 #include <random>
+#include <sstream>
 
 #include "sodium.h"
 
@@ -64,6 +65,16 @@ bool Scalar::valid() const {
     return (c != 0);
 }
 
+std::string Scalar::hex() const {
+  return ToHex(raw());
+}
+Scalar Scalar::FromHex(std::string_view view) {
+  if (view.size() != 64)
+    throw std::invalid_argument("Scalar::FromHex expected different size");
+  Scalar retval;
+  ::FromHex(retval.value, view);
+  return retval;
+}
 Scalar Scalar::Random() {
 	Scalar r;
 	// does random bytes, and check if it is canonical and != zero
@@ -80,6 +91,16 @@ Scalar Scalar::FromHash(uint8_t (&value)[64]) {
 }
 bool GroupElement::valid() const {
   return crypto_core_ristretto255_is_valid_point(value);
+}
+std::string GroupElement::hex() const {
+  return ToHex(raw());
+}
+GroupElement GroupElement::FromHex(std::string_view view) {
+  if (view.size() != 64)
+    throw std::invalid_argument("GroupElement::FromHex expected different size");
+  GroupElement retval;
+  ::FromHex(retval.value, view);
+  return retval;
 }
 GroupElement GroupElement::FromHash(uint8_t (&value)[64]) {
 	GroupElement r;
@@ -171,6 +192,37 @@ void KDFGenerateSeedKey(KDFSeedKey& seedKey) {
 
 void KDF(unsigned char *output, size_t outputLength, uint64_t subkey_id, const KDFContext& context, const KDFSeedKey& seedKey) {
 	ENSURE(0 == crypto_kdf_derive_from_key(output, outputLength, subkey_id, context, seedKey));
+}
+
+std::string ToHex(std::string_view in) {
+  std::stringstream output;
+  output << std::hex;
+  for (auto sc : in) {
+    auto c = uint8_t(sc);
+    output << int(c >> 4) << int(c & 0xF);
+  }
+  return output.str();
+}
+
+uint8_t FromDigit(char _c) {
+  uint8_t c = static_cast<uint8_t>(_c);
+  if ((c >= '0') && (c <= '9')) {
+    return c - '0';
+  } else if ((c >= 'a') && (c <= 'f')) {
+    return c - 'a' + 10;
+  } else if ((c >= 'A') && (c <= 'F')) {
+    return c - 'A' + 10;
+  }
+  throw std::invalid_argument("char " + std::to_string(int(c)) + " is not a hex char.");
+}
+void FromHex(uint8_t* out, size_t out_len, std::string_view in) {
+  if (out_len*2 != in.length())
+    throw std::invalid_argument("FromHex expected different size");
+  for (const char* it = in.begin(); it < in.end(); it += 2) {
+    uint8_t l = FromDigit(*it);
+    uint8_t r = FromDigit(*(it+1));
+    *(out++) = uint8_t(l<<4) | r;
+  }
 }
 
 }

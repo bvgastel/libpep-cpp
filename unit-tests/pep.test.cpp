@@ -4,6 +4,7 @@
 
 #include <limits.h>
 #include <optional>
+#include <sstream>
 
 IGNORE_WARNINGS_START
 #include <catch2/catch.hpp>
@@ -639,6 +640,80 @@ TEST_CASE("PEP.RistrettoExampleFromLibSodium", "[PEP]") {
 	//              = (p(x) * g)^k * g^(-k) = p(x)^k
 	GroupElement fx = b + vir;
 	CHECK(fx == k*px);
+}
+
+using GlobalPublicKey = GroupElement;
+using GlobalSecretKey = Scalar;
+using GlobalEncryptedPseudonym = ElGamal;
+using LocalEncryptedPseudonym = ElGamal;
+using LocalPseudonym = GroupElement;
+using LocalDecryptionKey = Scalar;
+
+std::tuple<GlobalPublicKey, GlobalSecretKey> GenerateGlobalKeys() {
+  auto secretKey = Scalar::Random();
+  auto publicKey = secretKey * G;
+  return {publicKey, secretKey};
+}
+
+GlobalEncryptedPseudonym GeneratePseudonym(std::string identity, const GlobalPublicKey& pk) {
+  HashSHA512 hash;
+  SHA512(hash, identity);
+  auto p = GroupElement::FromHash(hash);
+  return Encrypt(p, pk);
+}
+
+Scalar MakeFactor(const std::string& secret, const std::string& context) {
+  HashSHA512 uhash;
+  SHA512(uhash, secret, "|", context);
+  return Scalar::FromHash(uhash);
+}
+
+LocalEncryptedPseudonym MakeLocal(GlobalEncryptedPseudonym p, const std::string& secret, const std::string& decryptionContext, const std::string& pseudonimisationContext) {
+  Scalar u = MakeFactor(secret, pseudonimisationContext);
+  Scalar t = MakeFactor(secret, decryptionContext);
+  return RKS(p, t, u);
+}
+
+LocalDecryptionKey MakeLocalDecryptionKey(GlobalSecretKey k, std::string secret, std::string decryptionContext) {
+  Scalar t = MakeFactor(secret, decryptionContext);
+  return t * k;
+}
+
+LocalPseudonym DecryptLocalPseudonym(LocalEncryptedPseudonym p, LocalDecryptionKey k) {
+  return Decrypt(p, k);
+}
+
+GlobalEncryptedPseudonym RerandomizeGlobal(const GlobalEncryptedPseudonym& p) {
+  return Rerandomize(p, Scalar::Random());
+}
+LocalEncryptedPseudonym RerandomizeLocal(const LocalEncryptedPseudonym& p) {
+  return Rerandomize(p, Scalar::Random());
+}
+
+TEST_CASE("PEP.HighLevelAPI", "[PEP]") {
+  auto [publicKey, secretKey] = GenerateGlobalKeys();
+  std::cout << "global public key: " << publicKey.hex() << std::endl;
+  std::cout << "global secret key: " << secretKey.hex() << std::endl;
+
+  std::string id = "foobar";
+  auto gep = GeneratePseudonym(id, publicKey);
+  //gep = GlobalEncryptedPseudonym::FromHex(gep.hex());
+  std::cout << "global pseudonym for '" << id << "': " << gep.hex() << std::endl;
+  gep = RerandomizeGlobal(gep);
+  std::cout << "global pseudonym for '" << id << "': " << gep.hex() << " (after randomize)" << std::endl;
+  //gep = GlobalEncryptedPseudonym::FromHex(gep.hex());
+  auto lep = MakeLocal(gep, "very_secret_on_server", "decryption_context", "specific_pseudonimisation_context");
+  //lep = LocalEncryptedPseudonym::FromHex(lep.hex());
+  std::cout << "encrypted local pseudonym for '" << id << "': " << lep.hex() << std::endl;
+  lep = RerandomizeLocal(lep);
+  std::cout << "encrypted local pseudonym for '" << id << "': " << lep.hex() << " (after randomize)" << std::endl;
+
+  auto decryptionKey = MakeLocalDecryptionKey(secretKey, "very_secret_on_server", "decryption_context");
+  auto lp = DecryptLocalPseudonym(lep, decryptionKey);
+  auto expected = LocalPseudonym::FromHex("529c6099511d7d91aab86e4b3d2f6b529c76406da586d7aad5038df063997945");
+  CHECK(lp.hex() == expected.hex());
+  CHECK(lp == expected);
+  std::cout << "(decrypted local pseudonym) for '" << id << "': " << lp.hex() << std::endl;
 }
 
 }
