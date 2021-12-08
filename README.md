@@ -43,6 +43,15 @@ The key derivation function used in Blake2b. The hashing algorithm used is SHA51
 
 Unit tests can be easily added by adding a `unit-tests/foo.test.cpp` file.
 
+## Building and running
+
+Build using cmake:
+```
+cmake .
+cmake --build .
+```
+and then run the executable `peptest`.
+
 ## Background
 
 Based on the article by Eric Verheul and Bart Jacobs, *Polymorphic Encryption and Pseudonymisation in Identity Management and Medical Research*. In **Nieuw Archief voor Wiskunde (NAW)**, 5/18, nr. 3, 2017, p. 168-172. A local copy is available in docs/naw5-2017-18-3-168.pdf. This article does not contain the zero knowledge proofs.
