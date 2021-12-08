@@ -1,7 +1,14 @@
 # libpep: Library for polymorphic pseudonimisation and encryption
 
-Author: Bernard van Gastel
-Licence: Apache
+Author: Bernard van Gastel  
+License: Apache License 2.0
+
+Platforms:
+- FreeBSD;
+- Linux;
+- macOS;
+- Windows;
+- and probably others like Android/iOS/etc.
 
 This library implements the PEP encryption based on ElGamal, and operations on these encrypted messages. A message `M` can be encrypted for a receiver which has public key `Y` associated with it, belonging to secret key `y`. This encryption is random: every time a different random `r` is used, resulting in different ciphertexts (encrypted messages). We represent this encryption function as `EG(r, M, Y)`.
 
