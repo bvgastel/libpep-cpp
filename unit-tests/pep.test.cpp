@@ -15,6 +15,25 @@ namespace {
 using namespace radboud::pep;
 using namespace std::literals;
 
+TEST_CASE("PEP.Base", "[PEP]") {
+  // max int + 2
+  uint8_t too_large_scalar[Scalar::BYTES] = {
+   0xef, 0xd3, 0xf5, 0x5c, 0x1a, 0x63, 0x12, 0x58,
+   0xd6, 0x9c, 0xf7, 0xa2, 0xde, 0xf9, 0xde, 0x14,
+   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10,
+  };
+  Scalar s;
+  CHECK(s.valid());
+  CHECK(s.zero());
+  memcpy(s.value, too_large_scalar, sizeof(too_large_scalar));
+  CHECK(!s.valid());
+  GroupElement M;
+  CHECK(M.valid());
+  CHECK(M.zero());
+  s = Scalar::Random();
+  CHECK_THROWS(s*M);
+}
 TEST_CASE("PEP.SecureRemotePassword", "[PEP]") {
   uint8_t salt[4];
   RandomBytes(salt);

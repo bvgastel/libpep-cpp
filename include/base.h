@@ -50,6 +50,7 @@ struct Scalar {
   static Scalar FromHex(std::string_view view);
   // returns a scalar != 0
   static Scalar Random();
+  // returns a scalar != 0
   static Scalar FromHash(uint8_t (&value)[64]);
 };
 
@@ -76,7 +77,9 @@ struct GroupElement {
   bool valid() const;
   std::string hex() const;
   static GroupElement FromHex(std::string_view view);
+  // returns a group element which can be zero
   static GroupElement Random();
+  // returns a group element which can be zero
   static GroupElement FromHash(uint8_t (&value)[64]);
 };
 

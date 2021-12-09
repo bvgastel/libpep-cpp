@@ -22,7 +22,8 @@ static_assert(crypto_core_ristretto255_BYTES == GroupElement::BYTES);
 
 GroupElement Scalar::base() const {
   GroupElement r;
-  ENSURE(crypto_scalarmult_ristretto255_base(r.value, value) == 0);
+  if (crypto_scalarmult_ristretto255_base(r.value, value) != 0)
+    throw std::invalid_argument("base of scalar gave error (probably scalar is 0)");
   return r;
 }
 Scalar Scalar::invert() const {
@@ -73,17 +74,24 @@ Scalar Scalar::FromHex(std::string_view view) {
     throw std::invalid_argument("Scalar::FromHex expected different size");
   Scalar retval;
   ::FromHex(retval.value, view);
+  if (!retval.valid() || retval.zero())
+    throw std::invalid_argument("Scalar::FromHex produced invalid or zero Scalar");
   return retval;
 }
 Scalar Scalar::Random() {
   Scalar r;
   // does random bytes, and check if it is canonical and != zero
   crypto_core_ristretto255_scalar_random(r.value);
+  EXPECT(r.valid());
+  EXPECT(!r.zero());
   return r;
 }
 Scalar Scalar::FromHash(uint8_t (&value)[64]) {
   Scalar r;
   crypto_core_ristretto255_scalar_reduce(r.value, value);
+  r.value[0] |= r.zero() ? 0x1 : 0x0;
+  EXPECT(r.valid());
+  EXPECT(!r.zero());
   return r;
 }
 [[maybe_unused]] bool GroupElement::zero() const {
@@ -100,6 +108,8 @@ GroupElement GroupElement::FromHex(std::string_view view) {
     throw std::invalid_argument("GroupElement::FromHex expected different size");
   GroupElement retval;
   ::FromHex(retval.value, view);
+  if (!retval.valid() || retval.zero())
+    throw std::invalid_argument("GroupElement::FromHex produced invalid or zero GroupElement");
   return retval;
 }
 GroupElement GroupElement::FromHash(uint8_t (&value)[64]) {
@@ -157,12 +167,14 @@ Scalar operator/(const Scalar& lhs, const Scalar& rhs) {
 }
 GroupElement operator*(const Scalar& lhs, const GroupElement& rhs) {
   GroupElement r;
-  ENSURE(0 == crypto_scalarmult_ristretto255(r.value, lhs.value, rhs.value));
+  if (0 != crypto_scalarmult_ristretto255(r.value, lhs.value, rhs.value))
+    throw std::invalid_argument("Scalar*GroupElement gave error (probably one of them is 0)");
   return r;
 }
 GroupElement operator/(const GroupElement& lhs, const Scalar& rhs) {
   GroupElement r;
-  ENSURE(0 == crypto_scalarmult_ristretto255(r.value, rhs.invert().value, lhs.value));
+  if (0 != crypto_scalarmult_ristretto255(r.value, rhs.invert().value, lhs.value))
+    throw std::invalid_argument("GroupElement/Scalar gave error (probably one of them is 0)");
   return r;
 }
 bool operator==(const GroupElement& lhs, const GroupElement& rhs) {
