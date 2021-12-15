@@ -50,7 +50,7 @@ Build using cmake:
 cmake .
 cmake --build .
 ```
-and then run the executable `peptest`.
+and then run the executable `peptest` for the unit tests, or the executable `libpepcli` for the command line interface to the top level PEP API.
 
 ## Background
 
