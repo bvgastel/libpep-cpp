@@ -19,7 +19,6 @@
 #define  ENSURE_TEXT(e, text)  ((e) ? (void)0 : CrashAssert(__func__, __FILE__, __LINE__, #e, text))
 extern "C" [[noreturn]] void CrashAssert(const char* func, const char* file, int line, const char* condition, const char* explanation = nullptr);
 
-namespace radboud {
 namespace pep {
 
 struct GroupElement;
@@ -166,6 +165,5 @@ void FromHex(uint8_t (&out)[N], std::string_view in) {
   FromHex(out, N, in);
 }
 
-}
 }
 

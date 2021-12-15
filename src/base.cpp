@@ -8,7 +8,7 @@
 
 #include "sodium.h"
 
-using namespace radboud::pep;
+using namespace pep;
 
 extern "C" [[noreturn]] void CrashAssert(const char* func, const char* file, int line, const char* condition, const char* explanation) {
   fprintf(stderr, "asserton '%s' violated: %s [%s:%i] %s\n", condition, func, file, line, explanation);
@@ -123,7 +123,6 @@ GroupElement GroupElement::Random() {
   crypto_core_ristretto255_random(r.value);
   return r;
 }
-namespace radboud {
 namespace pep {
 
 GroupElement operator+(const GroupElement& lhs, const GroupElement& rhs) {
@@ -237,6 +236,5 @@ void FromHex(uint8_t* out, size_t out_len, std::string_view in) {
   }
 }
 
-}
 }
 

@@ -177,9 +177,12 @@ endif()
 
 
 
-add_library(lib${PROJECT_NAME} src/base.cpp src/core.cpp src/zkp.cpp)
+add_library(lib${PROJECT_NAME} src/base.cpp src/core.cpp src/zkp.cpp src/libpep.cpp)
 target_include_directories(lib${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(lib${PROJECT_NAME} extlib)
+
+add_executable(lib${PROJECT_NAME}cli src/cli.cpp)
+target_link_libraries(lib${PROJECT_NAME}cli lib${PROJECT_NAME})
 
 if (TEST)
     set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/ext/catch2/contrib)

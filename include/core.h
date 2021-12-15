@@ -4,7 +4,6 @@
 
 #include "base.h"
 
-namespace radboud {
 namespace pep {
 
 struct ElGamal {
@@ -37,5 +36,4 @@ ElGamal Reshuffle(const ElGamal& in, const Scalar& n);
 // combination of Rekey(k) and Reshuffle(n) and Rerandomize(r)
 ElGamal RKS(const ElGamal& in, const Scalar& k, const Scalar& n);
 
-}
 }

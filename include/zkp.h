@@ -2,7 +2,6 @@
 
 #include "core.h"
 
-namespace radboud {
 namespace pep {
 
 // offline Schnorr proof
@@ -76,5 +75,4 @@ ProvedRKS ProveRKS(const ElGamal& in, const Scalar& k, const Scalar& n);
 // return k.base() after ProveRKS(in, k, n)
 GroupElement RekeyByPublicKey(const ProvedRKS& in);
 
-}
 }
