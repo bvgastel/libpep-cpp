@@ -24,13 +24,13 @@ TEST_CASE("PEP.Base", "[PEP]") {
    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10,
   };
   Scalar s;
-  CHECK(s.valid());
-  CHECK(s.zero());
+  CHECK(s.is_valid());
+  CHECK(s.is_zero());
   memcpy(s.value, too_large_scalar, sizeof(too_large_scalar));
-  CHECK(!s.valid());
+  CHECK(!s.is_valid());
   GroupElement M;
-  CHECK(M.valid());
-  CHECK(M.zero());
+  CHECK(M.is_valid());
+  CHECK(M.is_zero());
   s = Scalar::Random();
   CHECK_THROWS(s*M);
 }
@@ -63,13 +63,13 @@ TEST_CASE("PEP.SecureRemotePassword", "[PEP]") {
   auto u = Scalar::FromHash(hashAB);
 
   // client
-  ENSURE(!B.zero());
-  ENSURE(!u.zero());
+  ENSURE(!B.is_zero());
+  ENSURE(!u.is_zero());
   CHECK(Scalar() + Scalar() == Scalar()); // test if zero() works
   auto S_C = (a + u*x)*(B - V);
 
   // server
-  ENSURE(!A.zero());
+  ENSURE(!A.is_zero());
   auto S_S = b*(A + u*V);
 
   CHECK(S_C == S_S);

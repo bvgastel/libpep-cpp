@@ -31,8 +31,8 @@ bool pep::ElGamal::operator!=(const ElGamal& rhs) const {
 // encrypt message M using public key Y
 ElGamal pep::Encrypt(const GroupElement& M, const GroupElement& Y) {
   auto r = Scalar::Random();
-  EXPECT(!r.zero()); // Random() does never return a zero scalar
-  ENSURE(!Y.zero()); // we should not encrypt anything with an empty public key, as this will result in plain text send over the line
+  EXPECT(!r.is_zero()); // Random() does never return a zero scalar
+  ENSURE(!Y.is_zero()); // we should not encrypt anything with an empty public key, as this will result in plain text send over the line
   return {r * G, M + r*Y, Y};
 }
 

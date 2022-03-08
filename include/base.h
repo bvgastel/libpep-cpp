@@ -39,12 +39,12 @@ struct Scalar {
   std::string_view raw() const {
     return {reinterpret_cast<const char*>(value), sizeof(value)};
   }
-  GroupElement base() const;
+  GroupElement mult_base() const;
   Scalar invert() const ; // s * s^-1 = 1
   Scalar complement() const ; // s + comp = 1 (mod L)
   Scalar operator-() const; // negate
-  bool zero() const;
-  bool valid() const;
+  bool is_zero() const;
+  bool is_valid() const;
   std::string hex() const;
   static Scalar FromHex(std::string_view view);
   // returns a scalar != 0
@@ -72,8 +72,8 @@ struct GroupElement {
   std::string_view raw() const {
     return {reinterpret_cast<const char*>(value), sizeof(value)};
   }
-  bool zero() const;
-  bool valid() const;
+  bool is_zero() const;
+  bool is_valid() const;
   std::string hex() const;
   static GroupElement FromHex(std::string_view view);
   // returns a group element which can be zero
