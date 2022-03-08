@@ -1,6 +1,7 @@
 // Author: Bernard van Gastel
 
 #include "core.h"
+#include <stdexcept>
 
 using namespace pep;
 
