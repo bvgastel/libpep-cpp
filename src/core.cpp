@@ -42,10 +42,6 @@ GroupElement pep::Decrypt(const ElGamal& in, const Scalar& y) {
   return in.C - y * in.B;
 }
 
-ElGamal RerandomizeY(const ElGamal& in, const Scalar& s) {
-  return {in.B - s*G, in.C, in.Y + s*G};
-}
-
 // randomize the encryption
 ElGamal pep::Rerandomize(const ElGamal& in, const Scalar& s) {
   return {s * G + in.B, s * in.Y + in.C, in.Y};
