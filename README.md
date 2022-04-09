@@ -52,6 +52,13 @@ cmake --build .
 ```
 and then run the executable `peptest` for the unit tests, or the executable `libpepcli` for the command line interface to the top level PEP API.
 
+For macOS, there is an easier method which installs `libpepcli`:
+```
+brew tap ilab/libpep https://gitlab.science.ru.nl/ilab/libpep
+brew install --HEAD ilab/libpep/libpep
+```
+Update with `brew reinstall ilab/libpep/libpep`.
+
 ## Background
 
 Based on the article by Eric Verheul and Bart Jacobs, *Polymorphic Encryption and Pseudonymisation in Identity Management and Medical Research*. In **Nieuw Archief voor Wiskunde (NAW)**, 5/18, nr. 3, 2017, p. 168-172. A local copy is available in docs/naw5-2017-18-3-168.pdf. This article does not contain the zero knowledge proofs.
