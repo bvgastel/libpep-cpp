@@ -17,18 +17,18 @@ GlobalEncryptedPseudonym pep::GeneratePseudonym(const std::string& identity, con
   return Encrypt(p, pk);
 }
 
+Scalar MakeFactor(const std::string& type, const std::string& secret, const std::string& context) {
+  HashSHA512 uhash;
+  SHA512(uhash, type, "|", secret, "|", context);
+  return Scalar::FromHash(uhash);
+}
+
 Scalar MakePseudonymisationFactor(const std::string& secret, const std::string& context) {
   return MakeFactor("pseudonym", secret, context);
 }
 
 Scalar MakeDecryptionFactor(const std::string& secret, const std::string& context) {
   return MakeFactor("decryption", secret, context);
-}
-
-Scalar MakeFactor(const std::string& type, const std::string& secret, const std::string& context) {
-  HashSHA512 uhash;
-  SHA512(uhash, type, "|", secret, "|", context);
-  return Scalar::FromHash(uhash);
 }
 
 LocalEncryptedPseudonym pep::ConvertToLocalPseudonym(GlobalEncryptedPseudonym p, const std::string& secret, const std::string& decryptionContext, const std::string& pseudonimisationContext) {

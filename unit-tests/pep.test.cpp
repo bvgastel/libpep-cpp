@@ -682,7 +682,7 @@ TEST_CASE("PEP.HighLevelAPI", "[PEP]") {
 
   auto decryptionKey = MakeLocalDecryptionKey(secretKey, "very_secret_on_server", "decryption_context");
   auto lp = DecryptLocalPseudonym(lep, decryptionKey);
-  auto expected = LocalPseudonym::FromHex("529c6099511d7d91aab86e4b3d2f6b529c76406da586d7aad5038df063997945");
+  auto expected = LocalPseudonym::FromHex("4854bb37a8f2e9555f317614290cbef72210901e05f0e0a6623e10df30dfa739");
   CHECK(lp.hex() == expected.hex());
   CHECK(lp == expected);
   std::cout << "(decrypted local pseudonym) for '" << id << "': " << lp.hex() << std::endl;
