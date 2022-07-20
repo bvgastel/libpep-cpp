@@ -17,20 +17,28 @@ GlobalEncryptedPseudonym pep::GeneratePseudonym(const std::string& identity, con
   return Encrypt(p, pk);
 }
 
-Scalar MakeFactor(const std::string& secret, const std::string& context) {
+Scalar MakeFactor(const std::string& type, const std::string& secret, const std::string& context) {
   HashSHA512 uhash;
-  SHA512(uhash, secret, "|", context);
+  SHA512(uhash, type, "|", secret, "|", context);
   return Scalar::FromHash(uhash);
 }
 
+Scalar MakePseudonymisationFactor(const std::string& secret, const std::string& context) {
+  return MakeFactor("pseudonym", secret, context);
+}
+
+Scalar MakeDecryptionFactor(const std::string& secret, const std::string& context) {
+  return MakeFactor("decryption", secret, context);
+}
+
 LocalEncryptedPseudonym pep::ConvertToLocalPseudonym(GlobalEncryptedPseudonym p, const std::string& secret, const std::string& decryptionContext, const std::string& pseudonimisationContext) {
-  Scalar u = MakeFactor(secret, pseudonimisationContext);
-  Scalar t = MakeFactor(secret, decryptionContext);
+  Scalar u = MakePseudonymisationFactor(secret, pseudonimisationContext);
+  Scalar t = MakeDecryptionFactor(secret, decryptionContext);
   return RKS(p, t, u);
 }
 
 LocalDecryptionKey pep::MakeLocalDecryptionKey(GlobalSecretKey k, const std::string& secret, const std::string& decryptionContext) {
-  Scalar t = MakeFactor(secret, decryptionContext);
+  Scalar t = MakeDecryptionFactor(secret, decryptionContext);
   return t * k;
 }
 

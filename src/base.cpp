@@ -82,16 +82,16 @@ Scalar Scalar::Random() {
   Scalar r;
   // does random bytes, and check if it is canonical and != zero
   crypto_core_ristretto255_scalar_random(r.value);
-  EXPECT(r.valid());
-  EXPECT(!r.zero());
+  EXPECT(r.is_valid());
+  EXPECT(!r.is_zero());
   return r;
 }
 Scalar Scalar::FromHash(uint8_t (&value)[64]) {
   Scalar r;
   crypto_core_ristretto255_scalar_reduce(r.value, value);
   r.value[0] |= r.is_zero() ? 0x1 : 0x0;
-  EXPECT(r.valid());
-  EXPECT(!r.zero());
+  EXPECT(r.is_valid());
+  EXPECT(!r.is_zero());
   return r;
 }
 bool GroupElement::is_zero() const {
