@@ -25,7 +25,7 @@ std::tuple<GroupElement,Proof> pep::CreateProof(const Scalar& a /*secret*/, cons
 }
 
 [[nodiscard]] bool pep::VerifyProof(const GroupElement& A, const GroupElement& M, const GroupElement& N, const GroupElement& C1, const GroupElement& C2, const Scalar& s) {
-  if (!A.valid() || !M.valid() || !N.valid() || !C1.valid() || !C2.valid() || !s.valid())
+  if (!A.is_valid() || !M.is_valid() || !N.is_valid() || !C1.is_valid() || !C2.is_valid() || !s.is_valid())
     return false;
   HashSHA512 hash;
   SHA512(hash,
@@ -59,7 +59,7 @@ ProvedRerandomize pep::ProveRerandomize(const ElGamal& in, const Scalar& s) {
 }
 [[nodiscard]] std::optional<ElGamal> pep::VerifyRerandomize(const GroupElement& B, const GroupElement& C, const GroupElement& Y, const GroupElement& S, const Proof& py) {
   // slightly different than the others, as we reuse the structure of a standard proof to reconstruct the Rerandomize operation after sending
-  return B.valid() && C.valid() && VerifyProof(S, Y, py) ?
+  return B.is_valid() && C.is_valid() && VerifyProof(S, Y, py) ?
     ElGamal{S + B, py.value() + C, Y} : std::optional<ElGamal>();
 }
 [[nodiscard]] std::optional<ElGamal> pep::VerifyRerandomize(const ElGamal& in, const ProvedRerandomize& p) {
@@ -75,7 +75,7 @@ ProvedReshuffle pep::ProveReshuffle(const ElGamal& in, const Scalar& n) {
   return {AB, pb, AC, pc};
 }
 [[nodiscard]] std::optional<ElGamal> pep::VerifyReshuffle(const GroupElement& B, const GroupElement& C, const GroupElement& Y, const GroupElement& AB, const Proof& pb, const GroupElement& AC, const Proof& pc) {
-  return VerifyProof(AB, B, pb) && VerifyProof(AC, C, pc) && Y.valid() ?
+  return VerifyProof(AB, B, pb) && VerifyProof(AC, C, pc) && Y.is_valid() ?
     ElGamal{pb.value(), pc.value(), Y} : std::optional<ElGamal>();
 }
 [[nodiscard]] std::optional<ElGamal> pep::VerifyReshuffle(const ElGamal& in, const ProvedReshuffle& p) {
@@ -91,7 +91,7 @@ ProvedRekey pep::ProveRekey(const ElGamal& in, const Scalar& k) {
 }
 
 [[nodiscard]] std::optional<ElGamal> pep::VerifyRekey(const GroupElement& B, const GroupElement& C, const GroupElement& Y, const GroupElement& AB, const Proof& pb, const GroupElement& AY, const Proof& py) {
-  return VerifyProof(AB, B, pb) && C.valid() && VerifyProof(AY, Y, py) ?
+  return VerifyProof(AB, B, pb) && C.is_valid() && VerifyProof(AY, Y, py) ?
     ElGamal{pb.value(), C, py.value()} : std::optional<ElGamal>();
 }
 

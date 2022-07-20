@@ -20,7 +20,7 @@ static_assert(crypto_core_ristretto255_BYTES == GroupElement::BYTES);
 
 // documentation of libsodium primitives: https://libsodium.gitbook.io/doc/advanced/point-arithmetic/ristretto
 
-GroupElement Scalar::base() const {
+GroupElement Scalar::mult_base() const {
   GroupElement r;
   if (crypto_scalarmult_ristretto255_base(r.value, value) != 0)
     throw std::invalid_argument("base of scalar gave error (probably scalar is 0)");
@@ -41,10 +41,10 @@ Scalar Scalar::complement() const {
   crypto_core_ristretto255_scalar_complement(r.value, value);
   return r;
 }
-[[maybe_unused]] bool Scalar::zero() const {
+bool Scalar::is_zero() const {
   return sodium_is_zero(value, sizeof(value));
 }
-bool Scalar::valid() const {
+bool Scalar::is_valid() const {
   // sc25519_is_canonical() from ed25519_ref10.c
 
   /* 2^252+27742317777372353535851937790883648493 */
@@ -74,7 +74,7 @@ Scalar Scalar::FromHex(std::string_view view) {
     throw std::invalid_argument("Scalar::FromHex expected different size");
   Scalar retval;
   ::FromHex(retval.value, view);
-  if (!retval.valid() || retval.zero())
+  if (!retval.is_valid() || retval.is_zero())
     throw std::invalid_argument("Scalar::FromHex produced invalid or zero Scalar");
   return retval;
 }
@@ -89,15 +89,15 @@ Scalar Scalar::Random() {
 Scalar Scalar::FromHash(uint8_t (&value)[64]) {
   Scalar r;
   crypto_core_ristretto255_scalar_reduce(r.value, value);
-  r.value[0] |= r.zero() ? 0x1 : 0x0;
+  r.value[0] |= r.is_zero() ? 0x1 : 0x0;
   EXPECT(r.valid());
   EXPECT(!r.zero());
   return r;
 }
-[[maybe_unused]] bool GroupElement::zero() const {
+bool GroupElement::is_zero() const {
   return sodium_is_zero(value, sizeof(value));
 }
-bool GroupElement::valid() const {
+bool GroupElement::is_valid() const {
   return crypto_core_ristretto255_is_valid_point(value);
 }
 std::string GroupElement::hex() const {
@@ -108,7 +108,7 @@ GroupElement GroupElement::FromHex(std::string_view view) {
     throw std::invalid_argument("GroupElement::FromHex expected different size");
   GroupElement retval;
   ::FromHex(retval.value, view);
-  if (!retval.valid() || retval.zero())
+  if (!retval.is_valid() || retval.is_zero())
     throw std::invalid_argument("GroupElement::FromHex produced invalid or zero GroupElement");
   return retval;
 }
@@ -167,13 +167,13 @@ Scalar operator/(const Scalar& lhs, const Scalar& rhs) {
 GroupElement operator*(const Scalar& lhs, const GroupElement& rhs) {
   GroupElement r;
   if (0 != crypto_scalarmult_ristretto255(r.value, lhs.value, rhs.value))
-    throw std::invalid_argument("Scalar*GroupElement gave error (probably one of them is 0)");
+    throw std::invalid_argument("Scalar*GroupElement gave error (one of them is 0)");
   return r;
 }
 GroupElement operator/(const GroupElement& lhs, const Scalar& rhs) {
   GroupElement r;
   if (0 != crypto_scalarmult_ristretto255(r.value, rhs.invert().value, lhs.value))
-    throw std::invalid_argument("GroupElement/Scalar gave error (probably one of them is 0)");
+    throw std::invalid_argument("GroupElement/Scalar gave error (one of them is 0)");
   return r;
 }
 bool operator==(const GroupElement& lhs, const GroupElement& rhs) {
@@ -187,7 +187,7 @@ bool operator!=(const GroupElement& lhs, const GroupElement& rhs) {
 }
 
 GroupElement operator*(const Scalar& lhs, const _G&) {
-  return lhs.base();
+  return lhs.mult_base();
 }
 
 void RandomBytes(void* ptr, std::size_t length) {
@@ -229,7 +229,7 @@ uint8_t FromDigit(char _c) {
 void FromHex(uint8_t* out, size_t out_len, std::string_view in) {
   if (out_len*2 != in.length())
     throw std::invalid_argument("FromHex expected different size");
-  for (const char* it = in.begin(); it < in.end(); it += 2) {
+  for (auto it = in.begin(); it+1 < in.end(); it += 2) {
     uint8_t l = FromDigit(*it);
     uint8_t r = FromDigit(*(it+1));
     *(out++) = uint8_t(l<<4) | r;

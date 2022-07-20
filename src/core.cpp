@@ -1,6 +1,7 @@
 // Author: Bernard van Gastel
 
 #include "core.h"
+#include <stdexcept>
 
 using namespace pep;
 
@@ -31,18 +32,14 @@ bool pep::ElGamal::operator!=(const ElGamal& rhs) const {
 // encrypt message M using public key Y
 ElGamal pep::Encrypt(const GroupElement& M, const GroupElement& Y) {
   auto r = Scalar::Random();
-  EXPECT(!r.zero()); // Random() does never return a zero scalar
-  ENSURE(!Y.zero()); // we should not encrypt anything with an empty public key, as this will result in plain text send over the line
+  EXPECT(!r.is_zero()); // Random() does never return a zero scalar
+  ENSURE(!Y.is_zero()); // we should not encrypt anything with an empty public key, as this will result in plain text send over the line
   return {r * G, M + r*Y, Y};
 }
 
 // decrypt encrypted ElGamal tuple with secret key y
 GroupElement pep::Decrypt(const ElGamal& in, const Scalar& y) {
   return in.C - y * in.B;
-}
-
-ElGamal RerandomizeY(const ElGamal& in, const Scalar& s) {
-  return {in.B - s*G, in.C, in.Y + s*G};
 }
 
 // randomize the encryption
