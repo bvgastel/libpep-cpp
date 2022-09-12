@@ -674,15 +674,15 @@ TEST_CASE("PEP.HighLevelAPI", "[PEP]") {
   gep = RerandomizeGlobal(gep);
   std::cout << "global pseudonym for '" << id << "': " << gep.hex() << " (after randomize)" << std::endl;
   //gep = GlobalEncryptedPseudonym::FromHex(gep.hex());
-  auto lep = ConvertToLocalPseudonym(gep, "very_secret_on_server", "decryption_context", "specific_pseudonimisation_context");
+  auto lep = ConvertToLocalPseudonym(gep, "very_secret_on_server", "login_session_of_user", "access_group_of_user");
   //lep = LocalEncryptedPseudonym::FromHex(lep.hex());
   std::cout << "encrypted local pseudonym for '" << id << "': " << lep.hex() << std::endl;
   lep = RerandomizeLocal(lep);
   std::cout << "encrypted local pseudonym for '" << id << "': " << lep.hex() << " (after randomize)" << std::endl;
 
-  auto decryptionKey = MakeLocalDecryptionKey(secretKey, "very_secret_on_server", "decryption_context");
+  auto decryptionKey = MakeLocalDecryptionKey(secretKey, "very_secret_on_server", "login_session_of_user");
   auto lp = DecryptLocalPseudonym(lep, decryptionKey);
-  auto expected = LocalPseudonym::FromHex("4854bb37a8f2e9555f317614290cbef72210901e05f0e0a6623e10df30dfa739");
+  auto expected = LocalPseudonym::FromHex("be26a708fcf722db8d19f6d8c8443794156af30b17c44bcf4bb41791c0708945");
   CHECK(lp.hex() == expected.hex());
   CHECK(lp == expected);
   std::cout << "(decrypted local pseudonym) for '" << id << "': " << lp.hex() << std::endl;
