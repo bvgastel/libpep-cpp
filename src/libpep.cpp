@@ -31,18 +31,18 @@ Scalar MakeDecryptionFactor(const std::string& secret, const std::string& contex
   return MakeFactor("decryption", secret, context);
 }
 
-LocalEncryptedPseudonym pep::ConvertToLocalPseudonym(GlobalEncryptedPseudonym p, const std::string& secret, const std::string& decryptionContext, const std::string& pseudonimisationContext) {
+LocalEncryptedPseudonym pep::ConvertToLocalPseudonym(const GlobalEncryptedPseudonym& p, const std::string& secret, const std::string& decryptionContext, const std::string& pseudonimisationContext) {
   Scalar u = MakePseudonymisationFactor(secret, pseudonimisationContext);
   Scalar t = MakeDecryptionFactor(secret, decryptionContext);
   return RKS(p, t, u);
 }
 
-LocalDecryptionKey pep::MakeLocalDecryptionKey(GlobalSecretKey k, const std::string& secret, const std::string& decryptionContext) {
+LocalDecryptionKey pep::MakeLocalDecryptionKey(const GlobalSecretKey& k, const std::string& secret, const std::string& decryptionContext) {
   Scalar t = MakeDecryptionFactor(secret, decryptionContext);
   return t * k;
 }
 
-LocalPseudonym pep::DecryptLocalPseudonym(LocalEncryptedPseudonym p, LocalDecryptionKey k) {
+LocalPseudonym pep::DecryptLocalPseudonym(const LocalEncryptedPseudonym& p, const LocalDecryptionKey& k) {
   return Decrypt(p, k);
 }
 
