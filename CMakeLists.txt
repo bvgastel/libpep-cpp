@@ -1,4 +1,7 @@
 cmake_minimum_required(VERSION 3.10) # 3.14 handles PIC differently
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.24.0") 
+  cmake_policy(SET CMP0135 NEW) # auto enable DOWNLOAD_EXTRACT_TIMESTAMP in ExternalProject_Add()
+endif()
 if (APPLE)
   if (CMAKE_BUILD_TYPE EQUAL "Release" OR CMAKE_BUILD_TYPE EQUAL "MinSizeRel")
     set(CMAKE_OSX_ARCHITECTURES arm64 x86_64) # needs to be set before project(), see https://cmake.org/cmake/help/latest/variable/CMAKE_OSX_ARCHITECTURES.html

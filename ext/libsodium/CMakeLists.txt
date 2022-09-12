@@ -1,4 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.24.0") 
+  cmake_policy(SET CMP0135 NEW) # auto enable DOWNLOAD_EXTRACT_TIMESTAMP in ExternalProject_Add()
+endif()
 project(libsodium_builder C)
 include(ExternalProject)
 
