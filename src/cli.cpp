@@ -9,7 +9,7 @@ int main(int argc, char** argv) {
     subcommand = argv[1];
   try {
     if (subcommand == "generate-global-keys") {
-      auto [pk, sk] = pep::GenerateGlobalKeys();
+      auto [pk, sk] = libpep::GenerateGlobalKeys();
       std::cerr << "Public global key: " << std::endl;
       std::cout << pk.hex() << std::endl;
       std::cerr << "Secret global key: " << std::endl;
@@ -22,8 +22,8 @@ int main(int argc, char** argv) {
         return -1;
       }
       std::string identity = argv[2];
-      auto pk = pep::GlobalPublicKey::FromHex(argv[3]);
-      auto local = pep::GeneratePseudonym(identity, pk);
+      auto pk = libpep::GlobalPublicKey::FromHex(argv[3]);
+      auto local = libpep::GeneratePseudonym(identity, pk);
       std::cerr << local.hex() << std::endl;
       return 0;
     }
@@ -32,12 +32,12 @@ int main(int argc, char** argv) {
         std::cerr << "wrong number of arguments" << std::endl;
         return -1;
       }
-      auto p = pep::GlobalEncryptedPseudonym::FromHex(argv[2]);
+      auto p = libpep::GlobalEncryptedPseudonym::FromHex(argv[2]);
       std::string serverSecret = argv[3];
       std::string decryptionContext = argv[4];
       std::string pContext = argv[5];
-      auto local = pep::ConvertToLocalPseudonym(p, serverSecret, decryptionContext, pContext);
-      local = pep::RerandomizeLocal(local);
+      auto local = libpep::ConvertToLocalPseudonym(p, serverSecret, decryptionContext, pContext);
+      local = libpep::RerandomizeLocal(local);
       std::cerr << local.hex() << std::endl;
       return 0;
     }
@@ -46,10 +46,10 @@ int main(int argc, char** argv) {
         std::cerr << "wrong number of arguments" << std::endl;
         return -1;
       }
-      auto sk = pep::GlobalSecretKey::FromHex(argv[2]);
+      auto sk = libpep::GlobalSecretKey::FromHex(argv[2]);
       std::string serverSecret = argv[3];
       std::string decryptionContext = argv[4];
-      auto localSk = pep::MakeLocalDecryptionKey(sk, serverSecret, decryptionContext);
+      auto localSk = libpep::MakeLocalDecryptionKey(sk, serverSecret, decryptionContext);
       std::cerr << localSk.hex() << std::endl;
       return 0;
     }
@@ -58,9 +58,9 @@ int main(int argc, char** argv) {
         std::cerr << "wrong number of arguments" << std::endl;
         return -1;
       }
-      auto local = pep::LocalEncryptedPseudonym::FromHex(argv[2]);
-      auto sk = pep::LocalDecryptionKey::FromHex(argv[3]);
-      auto p = pep::DecryptLocalPseudonym(local, sk);
+      auto local = libpep::LocalEncryptedPseudonym::FromHex(argv[2]);
+      auto sk = libpep::LocalDecryptionKey::FromHex(argv[3]);
+      auto p = libpep::DecryptLocalPseudonym(local, sk);
       std::cerr << p.hex() << std::endl;
       return 0;
     }

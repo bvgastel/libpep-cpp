@@ -3,9 +3,9 @@
 #include "core.h"
 #include <stdexcept>
 
-using namespace pep;
+using namespace libpep;
 
-pep::ElGamal::ElGamal(GroupElement _B, const GroupElement& _C, const GroupElement& _Y) : B(_B), C(_C), Y(_Y) {
+libpep::ElGamal::ElGamal(GroupElement _B, const GroupElement& _C, const GroupElement& _Y) : B(_B), C(_C), Y(_Y) {
 }
 
 std::string ElGamal::hex() const {
@@ -21,16 +21,16 @@ ElGamal ElGamal::FromHex(std::string_view view) {
   retval.Y = GroupElement::FromHex(view.substr(128, 64));
   return retval;
 }
-bool pep::ElGamal::operator==(const ElGamal& rhs) const {
+bool libpep::ElGamal::operator==(const ElGamal& rhs) const {
   return B == rhs.B && C == rhs.C && Y == rhs.Y;
 }
 
-bool pep::ElGamal::operator!=(const ElGamal& rhs) const {
+bool libpep::ElGamal::operator!=(const ElGamal& rhs) const {
   return B != rhs.B || C != rhs.C || Y != rhs.Y;
 }
 
 // encrypt message M using public key Y
-ElGamal pep::Encrypt(const GroupElement& M, const GroupElement& Y) {
+ElGamal libpep::Encrypt(const GroupElement& M, const GroupElement& Y) {
   auto r = Scalar::Random();
   EXPECT(!r.is_zero()); // Random() does never return a zero scalar
   ENSURE(!Y.is_zero()); // we should not encrypt anything with an empty public key, as this will result in plain text send over the line
@@ -38,26 +38,26 @@ ElGamal pep::Encrypt(const GroupElement& M, const GroupElement& Y) {
 }
 
 // decrypt encrypted ElGamal tuple with secret key y
-GroupElement pep::Decrypt(const ElGamal& in, const Scalar& y) {
+GroupElement libpep::Decrypt(const ElGamal& in, const Scalar& y) {
   return in.C - y * in.B;
 }
 
 // randomize the encryption
-ElGamal pep::Rerandomize(const ElGamal& in, const Scalar& s) {
+ElGamal libpep::Rerandomize(const ElGamal& in, const Scalar& s) {
   return {s * G + in.B, s * in.Y + in.C, in.Y};
 }
 
 // make it decryptable with another key k*y (with y the original private key)
-ElGamal pep::Rekey(const ElGamal& in, const Scalar& k) {
+ElGamal libpep::Rekey(const ElGamal& in, const Scalar& k) {
   return {in.B / k, in.C, k * in.Y};
 }
 
 // adjust the encrypted cypher text to be n*M (with M the original text being encrypted)
-ElGamal pep::Reshuffle(const ElGamal& in, const Scalar& n) {
+ElGamal libpep::Reshuffle(const ElGamal& in, const Scalar& n) {
   return {n * in.B, n * in.C, in.Y};
 }
 
 // combination of Rekey(k) and Reshuffle(n)
-ElGamal pep::RKS(const ElGamal& in, const Scalar& k, const Scalar& n) {
+ElGamal libpep::RKS(const ElGamal& in, const Scalar& k, const Scalar& n) {
   return {(n / k) * in.B, n * in.C, k * in.Y};
 }

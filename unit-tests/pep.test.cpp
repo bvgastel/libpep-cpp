@@ -12,7 +12,7 @@ IGNORE_WARNINGS_START
 IGNORE_WARNINGS_END
 
 namespace {
-using namespace pep;
+using namespace libpep;
 using namespace std::literals;
 
 TEST_CASE("PEP.Base", "[PEP]") {

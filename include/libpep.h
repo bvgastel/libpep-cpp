@@ -2,7 +2,7 @@
 
 #include "zkp.h"
 
-namespace pep {
+namespace libpep {
 
 using GlobalPublicKey = GroupElement;
 using GlobalSecretKey = Scalar;

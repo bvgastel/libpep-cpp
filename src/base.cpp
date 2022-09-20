@@ -8,7 +8,7 @@
 
 #include "sodium.h"
 
-using namespace pep;
+using namespace libpep;
 
 extern "C" [[noreturn]] void CrashAssert(const char* func, const char* file, int line, const char* condition, const char* explanation) {
   fprintf(stderr, "asserton '%s' violated: %s [%s:%i] %s\n", condition, func, file, line, explanation);
@@ -123,7 +123,7 @@ GroupElement GroupElement::Random() {
   crypto_core_ristretto255_random(r.value);
   return r;
 }
-namespace pep {
+namespace libpep {
 
 GroupElement operator+(const GroupElement& lhs, const GroupElement& rhs) {
   GroupElement r;

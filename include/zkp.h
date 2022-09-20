@@ -2,7 +2,7 @@
 
 #include "core.h"
 
-namespace pep {
+namespace libpep {
 
 // offline Schnorr proof
 // using Fiat-Shamir transform

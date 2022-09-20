@@ -4,7 +4,7 @@
 
 #include "base.h"
 
-namespace pep {
+namespace libpep {
 
 struct ElGamal {
   GroupElement B;

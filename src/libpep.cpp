@@ -2,15 +2,15 @@
 
 #include "libpep.h"
 
-using namespace pep;
+using namespace libpep;
 
-std::tuple<GlobalPublicKey, GlobalSecretKey> pep::GenerateGlobalKeys() {
+std::tuple<GlobalPublicKey, GlobalSecretKey> libpep::GenerateGlobalKeys() {
   auto secretKey = Scalar::Random();
   auto publicKey = secretKey * G;
   return {publicKey, secretKey};
 }
 
-GlobalEncryptedPseudonym pep::GeneratePseudonym(const std::string& identity, const GlobalPublicKey& pk) {
+GlobalEncryptedPseudonym libpep::GeneratePseudonym(const std::string& identity, const GlobalPublicKey& pk) {
   HashSHA512 hash;
   SHA512(hash, identity);
   auto p = GroupElement::FromHash(hash);
@@ -31,24 +31,24 @@ Scalar MakeDecryptionFactor(const std::string_view& secret, const std::string_vi
   return MakeFactor("decryption", secret, context);
 }
 
-LocalEncryptedPseudonym pep::ConvertToLocalPseudonym(const GlobalEncryptedPseudonym& p, const std::string_view& secret, const std::string_view& decryptionContext, const std::string_view& pseudonimisationContext) {
+LocalEncryptedPseudonym libpep::ConvertToLocalPseudonym(const GlobalEncryptedPseudonym& p, const std::string_view& secret, const std::string_view& decryptionContext, const std::string_view& pseudonimisationContext) {
   Scalar u = MakePseudonymisationFactor(secret, pseudonimisationContext);
   Scalar t = MakeDecryptionFactor(secret, decryptionContext);
   return RKS(p, t, u);
 }
 
-LocalDecryptionKey pep::MakeLocalDecryptionKey(const GlobalSecretKey& k, const std::string_view& secret, const std::string_view& decryptionContext) {
+LocalDecryptionKey libpep::MakeLocalDecryptionKey(const GlobalSecretKey& k, const std::string_view& secret, const std::string_view& decryptionContext) {
   Scalar t = MakeDecryptionFactor(secret, decryptionContext);
   return t * k;
 }
 
-LocalPseudonym pep::DecryptLocalPseudonym(const LocalEncryptedPseudonym& p, const LocalDecryptionKey& k) {
+LocalPseudonym libpep::DecryptLocalPseudonym(const LocalEncryptedPseudonym& p, const LocalDecryptionKey& k) {
   return Decrypt(p, k);
 }
 
-GlobalEncryptedPseudonym pep::RerandomizeGlobal(const GlobalEncryptedPseudonym& p) {
+GlobalEncryptedPseudonym libpep::RerandomizeGlobal(const GlobalEncryptedPseudonym& p) {
   return Rerandomize(p, Scalar::Random());
 }
-LocalEncryptedPseudonym pep::RerandomizeLocal(const LocalEncryptedPseudonym& p) {
+LocalEncryptedPseudonym libpep::RerandomizeLocal(const LocalEncryptedPseudonym& p) {
   return Rerandomize(p, Scalar::Random());
 }

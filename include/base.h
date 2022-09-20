@@ -18,7 +18,7 @@
 #define  ENSURE_TEXT(e, text)  ((e) ? (void)0 : CrashAssert(__func__, __FILE__, __LINE__, #e, text))
 extern "C" [[noreturn]] void CrashAssert(const char* func, const char* file, int line, const char* condition, const char* explanation = nullptr);
 
-namespace pep {
+namespace libpep {
 
 struct GroupElement;
 
