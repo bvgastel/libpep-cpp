@@ -6,7 +6,6 @@
 #include <string>
 
 #include "lib-common.h"
-#include "sodium/crypto_hash_sha512.h"
 
 #ifndef NDEBUG
 #define  EXPECT(e)  ((e) ? (void)0 : CrashAssert(__func__, __FILE__, __LINE__, #e))
@@ -107,27 +106,29 @@ GroupElement operator*(const Scalar& lhs, const _G& rhs);
 static const size_t SHA512_DIGEST_LENGTH = 64;
 using HashSHA512 = uint8_t[SHA512_DIGEST_LENGTH];
 
-inline void _SHA512Update(crypto_hash_sha512_state*) {
+struct SHA512State {
+    uint64_t state[8];
+    uint64_t count[2];
+    uint8_t  buf[128];
+    SHA512State();
+    void update(std::string_view in);
+    void finish(HashSHA512& out) &&;
+};
+
+inline void _SHA512Update(SHA512State&) {
 }
 
 template <typename... Args>
-void _SHA512Update(crypto_hash_sha512_state* cxt, std::string in, const Args& ... args) {
-  crypto_hash_sha512_update(cxt, reinterpret_cast<const unsigned char*>(in.data()), in.length());
-  _SHA512Update(cxt, args...);
-}
-
-template <typename... Args>
-void _SHA512Update(crypto_hash_sha512_state* cxt, std::string_view in, const Args& ... args) {
-  crypto_hash_sha512_update(cxt, reinterpret_cast<const unsigned char*>(in.data()), in.length());
+void _SHA512Update(SHA512State& cxt, const std::string_view& in, const Args& ... args) {
+  cxt.update(in);
   _SHA512Update(cxt, args...);
 }
 
 template <typename... Args>
 void SHA512(HashSHA512& hash, const Args& ... args) {
-  crypto_hash_sha512_state context;
-  crypto_hash_sha512_init(&context);
-  _SHA512Update(&context, args...);
-  crypto_hash_sha512_final(&context, &hash[0]);
+  SHA512State context = {};
+  _SHA512Update(context, args...);
+  std::move(context).finish(hash);
   // see http://www.daemonology.net/blog/2014-09-06-zeroing-buffers-is-insufficient.html and is slow
 }
 

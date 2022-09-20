@@ -205,6 +205,19 @@ void KDF(unsigned char *output, size_t outputLength, uint64_t subkey_id, const K
   ENSURE(0 == crypto_kdf_derive_from_key(output, outputLength, subkey_id, context, seedKey));
 }
 
+SHA512State::SHA512State() {
+  static_assert(sizeof(crypto_hash_sha512_state) == sizeof(SHA512State));
+  crypto_hash_sha512_init(reinterpret_cast<crypto_hash_sha512_state*>(this));
+}
+
+void SHA512State::update(std::string_view in) {
+  crypto_hash_sha512_update(reinterpret_cast<crypto_hash_sha512_state*>(this), reinterpret_cast<const unsigned char*>(in.data()), in.size());
+}
+
+void SHA512State::finish(HashSHA512& out) && {
+  crypto_hash_sha512_final(reinterpret_cast<crypto_hash_sha512_state*>(this), &out[0]);
+}
+
 std::string ToHex(std::string_view in) {
   std::stringstream output;
   output << std::hex;
