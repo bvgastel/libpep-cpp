@@ -14,7 +14,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 OPTION(ALL_WARNINGS "Enable all possible warnings" ON)
-OPTION(TEST "Build the tests" ON)
+ENABLE_TESTING()
+include(CTest)
 
 if(UNIX AND NOT APPLE)
   # reduce binary size, by making it easier to garbage collect redundant/unused binary code.
@@ -103,7 +104,7 @@ MESSAGE("using ext/ libsodium")
 add_subdirectory(${EXT_PROJECTS_DIR}/libsodium)
 target_link_libraries(extlib INTERFACE libsodium)
 
-if (TEST)
+if (BUILD_TESTING)
 	add_subdirectory(${EXT_PROJECTS_DIR}/catch2)
 	add_subdirectory(${EXT_PROJECTS_DIR}/rapidcheck-ext)
   target_include_directories(catch2 INTERFACE $<BUILD_INTERFACE: ${EXT_PROJECTS_DIR}/rapidcheck/extras/catch/include>)
@@ -184,10 +185,8 @@ add_executable(lib${PROJECT_NAME}cli src/cli.cpp)
 target_link_libraries(lib${PROJECT_NAME}cli lib${PROJECT_NAME})
 install(TARGETS lib${PROJECT_NAME}cli DESTINATION bin)
 
-if (TEST)
+if (BUILD_TESTING)
     set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/ext/catch2/contrib)
-    ENABLE_TESTING()
-    include(CTest)
     include(Catch)
 
     # unit test executable
@@ -200,4 +199,4 @@ if (TEST)
 		if (NOT CMAKE_CROSSCOMPILING)
 		    catch_discover_tests(${PROJECT_NAME}test) # do not enable if gtest is part of this (will execute all the gtest tests)
 		endif()
-endif(TEST)
+endif(BUILD_TESTING)
