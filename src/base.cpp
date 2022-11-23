@@ -143,11 +143,15 @@ GroupElement GroupElement::Random() {
 namespace libpep {
 
 GroupElement operator+(const GroupElement& lhs, const GroupElement& rhs) {
+  EXPECT(lhs.is_valid()); // checked in FromHex
+  EXPECT(rhs.is_valid()); // checked in FromHex
   GroupElement r;
   crypto_core_ristretto255_add(r.value, lhs.value, rhs.value);
   return r;
 }
 GroupElement operator-(const GroupElement& lhs, const GroupElement& rhs) {
+  EXPECT(lhs.is_valid()); // checked in FromHex
+  EXPECT(rhs.is_valid()); // checked in FromHex
   GroupElement r;
   crypto_core_ristretto255_sub(r.value, lhs.value, rhs.value);
   return r;
@@ -173,10 +177,7 @@ Scalar operator/(const Scalar& lhs, const Scalar& rhs) {
   return r;
 }
 [[maybe_unused]] bool operator==(const Scalar& lhs, const Scalar& rhs) {
-  for (size_t i = 0; i < sizeof(lhs.value); ++i)
-    if (lhs.value[i] != rhs.value[i])
-      return false;
-  return true;
+  return sodium_memcmp(lhs.value, rhs.value, sizeof(lhs.value)) == 0;
 }
 [[maybe_unused]] bool operator!=(const Scalar& lhs, const Scalar& rhs) {
   return !operator==(lhs, rhs);
@@ -194,10 +195,7 @@ GroupElement operator/(const GroupElement& lhs, const Scalar& rhs) {
   return r;
 }
 bool operator==(const GroupElement& lhs, const GroupElement& rhs) {
-  for (size_t i = 0; i < sizeof(lhs.value); ++i)
-    if (lhs.value[i] != rhs.value[i])
-      return false;
-  return true;
+  return sodium_memcmp(lhs.value, rhs.value, sizeof(lhs.value)) == 0;
 }
 bool operator!=(const GroupElement& lhs, const GroupElement& rhs) {
   return !operator==(lhs, rhs);
@@ -208,7 +206,7 @@ GroupElement operator*(const Scalar& lhs, const _G&) {
 }
 
 void RandomBytes(void* ptr, std::size_t length) {
-    ::randombytes(static_cast<unsigned char*>(ptr), length);
+    ::randombytes_buf(ptr, length);
 }
 
 static_assert(crypto_kdf_KEYBYTES == KDF_SEEDKEYBYTES);
