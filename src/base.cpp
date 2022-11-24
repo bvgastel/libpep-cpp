@@ -45,7 +45,9 @@ GroupElement Scalar::mult_base() const {
 }
 Scalar Scalar::invert() const {
   Scalar r;
-  crypto_core_ristretto255_scalar_invert(r.value, value);
+  if (0 != crypto_core_ristretto255_scalar_invert(r.value, value)) {
+    throw std::invalid_argument("Scalar::invert() on 0 scalar");
+  }
   return r;
 };
 Scalar Scalar::operator-() const {
