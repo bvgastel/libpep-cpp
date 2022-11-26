@@ -549,7 +549,7 @@ TEST_CASE("PEP.PEPSchnorrRekey", "[PEP]") {
 
   REQUIRE(checked);
   CHECK(msg != checked.value());
-  CHECK(RekeyByPublicKey(proved) == k * G);
+  CHECK(RekeyBy(proved) == k * G);
   CHECK(M == Decrypt(checked.value(), k*y));
 }
 
@@ -571,7 +571,7 @@ TEST_CASE("PEP.PEPSchnorrRKS", "[PEP]") {
 
   REQUIRE(checked);
   CHECK(msg != checked.value());
-  CHECK(RekeyByPublicKey(proved) == k * G);
+  CHECK(RekeyBy(proved) == k * G);
   CHECK(n*M == Decrypt(checked.value(), k*y));
 }
 

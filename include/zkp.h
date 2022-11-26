@@ -61,13 +61,14 @@ ProvedRerandomize ProveRerandomize(const ElGamal& in, const Scalar& s = Scalar::
 
 //// RESHUFFLE
 
-using ProvedReshuffle = std::tuple<GroupElement,Proof,GroupElement,Proof>;
+using ProvedReshuffle = std::tuple<GroupElement,Proof,Proof>;
 
 ProvedReshuffle ProveReshuffle(const ElGamal& in, const Scalar& n);
 
 [[nodiscard]] std::optional<ElGamal> VerifyReshuffle(const ElGamal& in, const ProvedReshuffle& p);
-[[nodiscard]] std::optional<ElGamal> VerifyReshuffle(const GroupElement& B, const GroupElement& C, const GroupElement& Y, const GroupElement& ab, const Proof& pb, const GroupElement& ac, const Proof& pc);
+[[nodiscard]] std::optional<ElGamal> VerifyReshuffle(const GroupElement& B, const GroupElement& C, const GroupElement& Y, const GroupElement& AB, const Proof& pb, const Proof& pc);
 
+GroupElement ReshuffledBy(const ProvedReshuffle& in);
 
 //// REKEY
 
@@ -78,7 +79,7 @@ ProvedRekey ProveRekey(const ElGamal& in, const Scalar& k);
 [[nodiscard]] std::optional<ElGamal> VerifyRekey(const GroupElement& B, const GroupElement& C, const GroupElement& Y, const GroupElement& AB, const Proof& pb, const GroupElement& AY, const Proof& py);
 
 // return k.base() after ProveRekey(in, k)
-GroupElement RekeyByPublicKey(const ProvedRekey& in);
+GroupElement RekeyBy(const ProvedRekey& in);
 
 //// RKS
 
@@ -89,7 +90,9 @@ ProvedRKS ProveRKS(const ElGamal& in, const Scalar& k, const Scalar& n);
 [[nodiscard]] std::optional<ElGamal> VerifyRKS(const ElGamal& in, const ProvedRKS& p);
 [[nodiscard]] std::optional<ElGamal> VerifyRKS(const GroupElement& B, const GroupElement& C, const GroupElement& Y, const GroupElement& AB, const Proof& pb, const GroupElement& AC, const Proof& pc, const GroupElement& AY, const Proof& py);
 
+// return n.base() after ProveRKS(in, k, n)
+GroupElement ReshuffledBy(const ProvedRKS& in);
 // return k.base() after ProveRKS(in, k, n)
-GroupElement RekeyByPublicKey(const ProvedRKS& in);
+GroupElement RekeyBy(const ProvedRKS& in);
 
 }
