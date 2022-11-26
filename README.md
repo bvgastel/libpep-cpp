@@ -3,6 +3,10 @@
 Author: Bernard van Gastel  
 License: Apache License 2.0
 
+Same library in different languages:
+- [libpep-cpp](https://github.com/bvgastel/libpep-cpp) (C++);
+- [libpep on crates.io](https://crates.io/crates/libpep) (Rust).
+
 Platforms:
 - FreeBSD;
 - Linux;
@@ -39,7 +43,7 @@ Group elements have an *almost* 32 byte range (top bit is always zero, and some 
 
 The zero knowledge proofs are offline Schnorr proofs, based on a Fiat-Shamir transform.
 
-The key derivation function used in Blake2b. The hashing algorithm used is SHA512.
+The key derivation function used is Blake2b. The hashing algorithm used is SHA512.
 
 Unit tests can be easily added by adding a `unit-tests/foo.test.cpp` file.
 
