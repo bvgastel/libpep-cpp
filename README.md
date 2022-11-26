@@ -59,7 +59,7 @@ and then run the executable `peptest` for the unit tests, or the executable `lib
 For macOS, there is an easier method which installs `libpepcli`:
 ```
 brew tap bvgastel/libpep-cpp https://github.com/bvgastel/libpep-cpp
-brew install --HEAD bvgastel/libpep-cpp/libppep-cpp
+brew install --HEAD bvgastel/libpep-cpp/libpep-cpp
 ```
 Update with `brew reinstall bvgastel/libpep-cpp/libpep-cpp`.
 
