@@ -33,6 +33,7 @@ std::tuple<GlobalPublicKey, GlobalSecretKey> GenerateGlobalKeys();
 GlobalEncryptedPseudonym GeneratePseudonym(const std::string& identity, const GlobalPublicKey& pk);
 
 LocalEncryptedPseudonym ConvertToLocalPseudonym(const GlobalEncryptedPseudonym& p, const std::string_view& secret, const std::string_view& decryptionContext, const std::string_view& pseudonimisationContext);
+GlobalEncryptedPseudonym ConvertFromLocalPseudonym(const LocalEncryptedPseudonym& p, const std::string_view& secret, const std::string_view& decryptionContext, const std::string_view& pseudonimisationContext);
 
 LocalDecryptionKey MakeLocalDecryptionKey(const GlobalSecretKey& k, const std::string_view& secret, const std::string_view& decryptionContext);
 

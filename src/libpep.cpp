@@ -54,6 +54,12 @@ LocalEncryptedPseudonym libpep::ConvertToLocalPseudonym(const GlobalEncryptedPse
   return RKS(p, t, u);
 }
 
+GlobalEncryptedPseudonym libpep::ConvertFromLocalPseudonym(const LocalEncryptedPseudonym& p, const std::string_view& secret, const std::string_view& decryptionContext, const std::string_view& pseudonimisationContext) {
+  Scalar u = MakePseudonymisationFactor(secret, pseudonimisationContext);
+  Scalar t = MakeDecryptionFactor(secret, decryptionContext);
+  return RKS(p, t.invert(), u.invert());
+}
+
 LocalDecryptionKey libpep::MakeLocalDecryptionKey(const GlobalSecretKey& k, const std::string_view& secret, const std::string_view& decryptionContext) {
   Scalar t = MakeDecryptionFactor(secret, decryptionContext);
   return t * k;
