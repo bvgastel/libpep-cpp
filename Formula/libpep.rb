@@ -1,4 +1,4 @@
-class Libpep < Formula
+class Libpep_cpp < Formula
   desc "Polymorphic Encryption and Pseudonimisation library"
   homepage "https://github.com/bvgastel/libpep-cpp"
   #url "https://bitpowder.com:2443/bvgastel/clippy/-/archive/0.1.1/clippy-0.1.1.tar.gz"
