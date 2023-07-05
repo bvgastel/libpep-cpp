@@ -259,7 +259,7 @@ uint8_t FromDigit(char _c) {
 void FromHex(uint8_t* out, size_t out_len, std::string_view in) {
   if (out_len*2 != in.length())
     throw std::invalid_argument("FromHex expected different size");
-  for (auto it = in.begin(); it+1 < in.end(); it += 2) {
+  for (auto it = in.begin(); it < in.end() && it+1 < in.end(); it += 2) {
     uint8_t l = FromDigit(*it);
     uint8_t r = FromDigit(*(it+1));
     *(out++) = uint8_t(l<<4) | r;
